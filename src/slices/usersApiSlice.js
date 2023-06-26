@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice";
 
-const USERS_URL = "/api/1.0";
+const USERS_URL = "https://hostel-mgt-staging-0b2f0879c515.herokuapp.com/api/1.0";
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
