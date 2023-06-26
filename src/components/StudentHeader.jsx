@@ -83,6 +83,30 @@ const TABLE_ROWS = [
     level: "200",
   },
   {
+    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
+    name: "Richard Gran",
+    email: "richard@creative-tim.com",
+    amountPaid: "90,000",
+    org: "Executive",
+    percentage: 45,
+    hostel: "BOT",
+    room: "215",
+    department: "Library and Information Science",
+    level: "200",
+  },
+  {
+    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
+    name: "Richard Gran",
+    email: "richard@creative-tim.com",
+    amountPaid: "90,000",
+    org: "Executive",
+    percentage: 45,
+    hostel: "BOT",
+    room: "215",
+    department: "Library and Information Science",
+    level: "200",
+  },
+  {
     img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
     name: "Laurent Perrier",
     email: "laurent@creative-tim.com",
@@ -110,7 +134,7 @@ const TABLE_ROWS = [
 
 export default function StudentHeader() {
   return (
-    <Card className="h-full w-full">
+    <Card className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md h-full w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="md:flex items-center justify-between gap-8 sm:block">
           <div>
