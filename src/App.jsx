@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import Students from "./pages/Students";
+import StudentsBody from "./pages/Students";
 import { useSelector } from "react-redux";
 import NotFound from "./pages/NotFound";
 
@@ -27,7 +27,7 @@ export default function App() {
         <ToastContainer />
         {twk && <Header />}
         <Routes>
-          <Route path="/" element={<AuthWrapper><Students /></AuthWrapper>} />
+          <Route path="/" element={<AuthWrapper><StudentsBody /></AuthWrapper>} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound/>}/>
         </Routes>

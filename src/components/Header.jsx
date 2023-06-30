@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const navigation = [
   { name: "Students", href: "#", current: true },
-  { name: "Hostels", href: "#", current: false },
+  { name: "Hostels", href: "/new-header", current: false },
 ];
 
 import { useLogoutMutation } from "../slices/usersApiSlice";

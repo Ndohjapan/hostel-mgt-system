@@ -132,7 +132,9 @@ const TABLE_ROWS = [
   },
 ];
 
-export default function StudentHeader() {
+export default function StudentsBody() {
+
+  
   return (
     <Card className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md h-full w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <CardHeader floated={false} shadow={false} className="rounded-none">

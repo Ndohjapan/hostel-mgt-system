@@ -1,7 +1,7 @@
-import StudentHeader from '../components/StudentHeader'
+import StudentsBody from '../components/StudentHeader'
 function Students() {
   return (
-    <StudentHeader/>
+    <StudentsBody/>
   )
 }
 
