@@ -20,9 +20,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
 
     getStudents: builder.mutation({
-      query: () => ({
-        url: `${USERS_URL}/logout`,
-        method: "POST",
+      query: (data) => ({
+        url: `${USERS_URL}/user?page=${data.page}&limit=${data.limit}`,
+        method: "GET",
+        headers: {
+          "x-access-token": (data.token)
+        }
       }),
     })
   }),

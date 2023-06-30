@@ -3,9 +3,10 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import StudentsBody from "./pages/Students";
+import Students from "./pages/Students";
 import { useSelector } from "react-redux";
 import NotFound from "./pages/NotFound";
+import StudentdDetail from "./pages/StudentdDetail";
 
 // eslint-disable-next-line react/prop-types
 const AuthWrapper = ({ children }) => {
@@ -27,7 +28,8 @@ export default function App() {
         <ToastContainer />
         {twk && <Header />}
         <Routes>
-          <Route path="/" element={<AuthWrapper><StudentsBody /></AuthWrapper>} />
+          <Route path="/" element={<AuthWrapper><Students /></AuthWrapper>} />
+          <Route path="/user/:userId" element={<AuthWrapper><StudentdDetail/></AuthWrapper>} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound/>}/>
         </Routes>

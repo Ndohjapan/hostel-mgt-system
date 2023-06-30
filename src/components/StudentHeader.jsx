@@ -9,7 +9,15 @@ import {
   Chip,
   CardFooter,
   Avatar,
+  Spinner,
 } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
+import { useGetStudentsMutation, useLogoutMutation } from "../slices/usersApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { logout } from "../slices/authSlice";
+import "react-toastify/dist/ReactToastify.css";
 
 const TABLE_HEAD = [
   "Student",
@@ -21,120 +29,44 @@ const TABLE_HEAD = [
   "Level",
 ];
 
-const TABLE_ROWS = [
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    amountPaid: "150,000",
-    org: "Organization",
-    percentage: 75,
-    hostel: "",
-    room: "",
-    department: "Law",
-    level: "200",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-2.jpg",
-    name: "Alexa Liras",
-    email: "alexa@creative-tim.com",
-    amountPaid: "120,000",
-    org: "Developer",
-    percentage: 60,
-    hostel: "Cam David 2 Boys",
-    room: "114",
-    department: "Software Engineering",
-    level: "300",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
-    name: "Laurent Perrier",
-    email: "laurent@creative-tim.com",
-    amountPaid: "200,000",
-    org: "Projects",
-    percentage: 100,
-    hostel: "Block U",
-    room: "106",
-    department: "Nursing",
-    level: "100",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-4.jpg",
-    name: "Michael Levi",
-    email: "michael@creative-tim.com",
-    amountPaid: "100,000",
-    org: "Developer",
-    percentage: 50,
-    hostel: "Block L",
-    room: "104",
-    department: "Computer Science",
-    level: "PG",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
-    name: "Richard Gran",
-    email: "richard@creative-tim.com",
-    amountPaid: "90,000",
-    org: "Executive",
-    percentage: 45,
-    hostel: "BOT",
-    room: "215",
-    department: "Library and Information Science",
-    level: "200",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
-    name: "Richard Gran",
-    email: "richard@creative-tim.com",
-    amountPaid: "90,000",
-    org: "Executive",
-    percentage: 45,
-    hostel: "BOT",
-    room: "215",
-    department: "Library and Information Science",
-    level: "200",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
-    name: "Richard Gran",
-    email: "richard@creative-tim.com",
-    amountPaid: "90,000",
-    org: "Executive",
-    percentage: 45,
-    hostel: "BOT",
-    room: "215",
-    department: "Library and Information Science",
-    level: "200",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
-    name: "Laurent Perrier",
-    email: "laurent@creative-tim.com",
-    amountPaid: "200,000",
-    org: "Projects",
-    percentage: 100,
-    hostel: "Block U",
-    room: "106",
-    department: "Nursing",
-    level: "100",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
-    name: "Laurent Perrier",
-    email: "laurent@creative-tim.com",
-    amountPaid: "200,000",
-    org: "Projects",
-    percentage: 100,
-    hostel: "Block U",
-    room: "106",
-    department: "Nursing",
-    level: "100",
-  },
-];
+export default function StudentHeader() {
+  const [getStudents, { isLoading }] = useGetStudentsMutation();
+  const [logoutApiCall] = useLogoutMutation();
+  const [users, setUsers] = useState([]);
+  const [pagination, setPagination] = useState([]);
 
-export default function StudentsBody() {
+  const { twk } = useSelector((state) => state.auth);
 
-  
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function getRes() {
+
+      try {
+        const res = await getStudents({ page: 1, limit: 20, token: twk });
+        if(res.error){
+          throw Error(res.error.data.message);
+        }
+        setUsers(res.data.docs);
+        setPagination(res);
+      } catch (error) {
+        toast.error(error.message);
+        await logoutApiCall().unwrap();
+        dispatch(logout());
+        navigate("/login");
+      }
+    }
+
+    getRes();
+  }, [dispatch, getStudents, logoutApiCall, navigate, twk]);
+
+  const userDetails = async (e) => {
+    e.preventDefault();
+    const userId = e.currentTarget.id;
+    navigate(`/user/${userId}`);
+  };
+
   return (
     <Card className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md h-full w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -156,151 +88,210 @@ export default function StudentsBody() {
         </div>
       </CardHeader>
       <CardBody className="overflow-scroll px-0">
-        <table className="mt-4 w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+        {isLoading ? (
+          <div className="flex justify-center">
+            <Spinner />
+          </div>
+        ) : (
+          <table className="mt-4 w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                   >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TABLE_ROWS.map(
-              (
-                {
-                  img,
-                  name,
-                  email,
-                  amountPaid,
-                  percentage,
-                  hostel,
-                  room,
-                  department,
-                  level,
-                },
-                index
-              ) => {
-                const isLast = index === TABLE_ROWS.length - 1;
-                const classes = isLast
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(
+                (
+                  {
+                    avatar,
+                    firstname,
+                    middlename,
+                    lastname,
+                    amountPaid,
+                    percentage,
+                    room,
+                    department,
+                    level,
+                    _id,
+                  },
+                  index
+                ) => {
+                  const isLast = index === users.length - 1;
+                  const classes = isLast
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={name}>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        <Avatar src={img} alt={name} size="sm" />
+                  return (
+                    <tr key={_id} onClick={userDetails} id={_id} className="hover:bg-gray-100 cursor-pointer">
+                      <td className={classes}>
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src={avatar}
+                            alt={lastname + " " + firstname + " " + middlename}
+                            size="sm"
+                          />
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {lastname + " " + firstname + " " + middlename}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={classes}>
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {name}
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal opacity-70"
-                          >
-                            {email}
+                            {amountPaid}
                           </Typography>
                         </div>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <div className="flex flex-col">
+                      </td>
+                      <td className={classes}>
+                        <div className="w-max">
+                          <Chip
+                            variant="ghost"
+                            size="sm"
+                            value={percentage + "%"}
+                            color={
+                              percentage < 50
+                                ? "red"
+                                : percentage < 100
+                                ? "yellow"
+                                : "green"
+                            }
+                          />
+                        </div>
+                      </td>
+                      <td className={classes}>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {amountPaid}
+                          {room ? room.hostel.name : "----"}
                         </Typography>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                        <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={percentage + "%"}
-                          color={
-                            percentage < 50
-                              ? "red"
-                              : percentage < 100
-                              ? "yellow"
-                              : "green"
-                          }
-                        />
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {hostel ? hostel : "----"}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {room ? room : "----"}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {department}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {level}
-                      </Typography>
-                    </td>
-                  </tr>
-                );
-              }
-            )}
-          </tbody>
-        </table>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {room ? room.roomNum : "----"}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {department}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {level}
+                        </Typography>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
+            </tbody>
+          </table>
+        )}
       </CardBody>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 sticky bottom-0 bg-white">
-        <Typography variant="small" color="blue-gray" className="font-normal">
-          Page 1 of 10
-        </Typography>
-        <div className="flex gap-2">
-          <Button variant="outlined" color="blue-gray" size="sm">
-            Previous
-          </Button>
-          <Button variant="outlined" color="blue-gray" size="sm">
-            Next
-          </Button>
-        </div>
+        {isLoading === true ? (
+          <>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {"Page 0 of 0"}
+            </Typography>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {"0 of 0 Student"}
+            </Typography>
+            <div className="flex gap-2">
+              <Button variant="outlined" color="blue-gray" size="sm" disabled>
+                Previous
+              </Button>
+              <Button variant="outlined" color="blue-gray" size="sm" disabled>
+                Next
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {"Page " +
+                pagination.data?.page +
+                " of " +
+                pagination.data?.totalPages}
+            </Typography>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {users.length + " of " + pagination.data?.totalDocs + " Students"}
+            </Typography>
+            <div className="flex gap-2">
+              {pagination.data?.prevPage === null ? (
+                <Button variant="outlined" color="blue-gray" size="sm" disabled>
+                  Previous
+                </Button>
+              ) : (
+                <Button variant="outlined" color="blue-gray" size="sm">
+                  Previous
+                </Button>
+              )}
+              {pagination.data?.nextPage === null ? (
+                <Button variant="outlined" color="blue-gray" size="sm" disabled>
+                  Next
+                </Button>
+              ) : (
+                <Button variant="outlined" color="blue-gray" size="sm">
+                  Next
+                </Button>
+              )}
+            </div>
+          </>
+        )}
       </CardFooter>
     </Card>
   );

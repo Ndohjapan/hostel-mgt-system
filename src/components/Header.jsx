@@ -4,8 +4,8 @@ import { Spinner } from "@material-tailwind/react";
 import { toast } from "react-toastify";
 
 const navigation = [
-  { name: "Students", href: "#", current: true },
-  { name: "Hostels", href: "/new-header", current: false },
+  { name: "Students", href: "/", current: true },
+  { name: "Hostels", href: "/hostel", current: false },
 ];
 
 import { useLogoutMutation } from "../slices/usersApiSlice";
