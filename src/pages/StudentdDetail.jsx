@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { logout } from "../slices/authSlice";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom";
+import Modal from "../components/Modal";
 
 function StudentdDetail() {
   const { twk } = useSelector((state) => state.auth);
@@ -16,6 +17,9 @@ function StudentdDetail() {
   const [getStudent, { isLoading }] = useGetStudentMutation();
   const [logoutApiCall] = useLogoutMutation();
   const [user, setUser] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -44,6 +48,10 @@ function StudentdDetail() {
     e.preventDefault
     navigate("/room/available");
   }
+
+  const toggleModal = () => {
+    setIsOpen(prev => !prev);
+  };
 
   return (
     <>
@@ -166,9 +174,9 @@ function StudentdDetail() {
                 </div>
                 <div className="w-full md:w-72 mt-6 md:mt-0 flex justify-center">
                   {user.room ? (
-                    <button className="text-white rounded-md bg-red-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                      Remove
-                    </button>
+                    <><button className="text-white rounded-md bg-red-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={toggleModal}>
+                        Remove
+                      </button><Modal isOpen={isOpen} toggleModal={toggleModal} user={user}/></>
                   ) : (
                     <button className="text-white rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={assignRoom}>
                       Assign

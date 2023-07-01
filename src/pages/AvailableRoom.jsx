@@ -56,7 +56,8 @@ function AvailableRoom() {
     useGetAvailableRoomsMutation();
   const [logoutApiCall] = useLogoutMutation();
   const [hostels, setHostels] = useState([]);
-  const [selectedHostel, setSelectedHostel] = useState(null);
+  const [selectedHostel, setSelectedHostel] = useState("");
+  const [rooms, setRooms] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -82,9 +83,24 @@ function AvailableRoom() {
   }, [dispatch, getHostels, logoutApiCall, navigate, twk]);
 
   const getAvalaibleRooms = async (e) => {
-    setSelectedHostel(e);
-    console.log(e);
-  };  
+    try {
+        let roomId = e.target.id;
+        setSelectedHostel(e.target.innerHTML);
+        const res = await avalaibleRooms({ token: twk, roomId });
+        if (res.error) {
+          throw Error(res.error.data.message);
+        }
+        setRooms(res.data);
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+        await logoutApiCall().unwrap();
+        dispatch(logout());
+        navigate("/login");
+      }
+
+  };
 
   return (
     <>
@@ -94,19 +110,17 @@ function AvailableRoom() {
         </p>
         <div className="flex flex-col items-center">
           <div className="w-72">
-            <Select
-              label="Select Version"
-              value={selectedHostel}
-              onChange={(e) => {getAvalaibleRooms(e)}}
-            >
+            <Select label="Select Version" value={selectedHostel}>
               {isLoading ? (
                 <div className="flex justify-center">
                   <Spinner />
                 </div>
               ) : (
-                hostels.map(({ name, _id }) => (
-                  <Option key={_id} value={name} id={_id} className="bg-white">
-                    {name}
+                hostels.map(({ name, _id }, index) => (
+                  <Option key={index} value={name} className="bg-white">
+                    <p onClick={getAvalaibleRooms} id={_id}>
+                      {name}
+                    </p>
                   </Option>
                 ))
               )}
@@ -115,9 +129,8 @@ function AvailableRoom() {
         </div>
         <p className="font-bold text-1xl text-gray-800 my-4">Available Rooms</p>
         <CardBody className="overflow-scroll p-0">
-          {isLoading ? (
+          {rooms.length < 1 ? (
             <div className="flex justify-center">
-              <Spinner />
             </div>
           ) : (
             <table className=" w-full min-w-max table-auto text-left">
@@ -140,7 +153,7 @@ function AvailableRoom() {
                 </tr>
               </thead>
               <tbody>
-                {TABLE_ROWS.map(
+                {rooms.map(
                   ({ roomNum, maxPerRoom, numOfStudents, _id }, index) => {
                     const isLast = index === TABLE_ROWS.length - 1;
                     const classes = isLast
@@ -149,7 +162,7 @@ function AvailableRoom() {
 
                     return (
                       <tr
-                        key={_id}
+                        key={index}
                         id={_id}
                         className="hover:bg-gray-100 cursor-pointer"
                       >
@@ -158,9 +171,9 @@ function AvailableRoom() {
                             <Typography
                               variant="small"
                               color="blue-gray"
-                              className="font-normal"
+                              className="font-normal text-center"
                             >
-                              Block U
+                              {selectedHostel}
                             </Typography>
                           </div>
                         </td>
@@ -168,7 +181,7 @@ function AvailableRoom() {
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal"
+                            className="font-normal text-center"
                           >
                             {roomNum}
                           </Typography>
@@ -177,7 +190,7 @@ function AvailableRoom() {
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal"
+                            className="font-normal text-center"
                           >
                             {maxPerRoom}
                           </Typography>
@@ -186,7 +199,7 @@ function AvailableRoom() {
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal"
+                            className="font-normal text-center" 
                           >
                             {numOfStudents}
                           </Typography>
@@ -206,7 +219,7 @@ function AvailableRoom() {
               color="blue-gray"
               className="font-normal"
             >
-              {"Page 0 of 0"}
+              {"Page 1 of 1"}
             </Typography>
             <div className="flex gap-2">
               <Button variant="outlined" color="blue-gray" size="sm" disabled>
