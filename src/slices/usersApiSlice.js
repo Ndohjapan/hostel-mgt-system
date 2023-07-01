@@ -37,8 +37,28 @@ export const usersApiSlice = apiSlice.injectEndpoints({
           "x-access-token": (data.token)
         }
       }),
+    }),
+
+    getHostels: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/hostel`,
+        method: "GET",
+        headers: {
+          "x-access-token": (data.token)
+        }
+      }),
+    }),
+
+    getAvailableRooms: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/room/available/${data.roomId}`,
+        method: "GET",
+        headers: {
+          "x-access-token": (data.token)
+        }
+      }),
     })
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useGetStudentsMutation, useGetStudentMutation } = usersApiSlice;
+export const { useLoginMutation, useLogoutMutation, useGetStudentsMutation, useGetStudentMutation, useGetHostelsMutation, useGetAvailableRoomsMutation } = usersApiSlice;
