@@ -1,18 +1,29 @@
-import { Fragment, useState } from "react";
 import {
   Button,
   Dialog,
   DialogHeader,
   DialogBody,
   DialogFooter,
+  Spinner,
 } from "@material-tailwind/react";
 
 // eslint-disable-next-line react/prop-types
-export default function Modal({ isOpen, toggleModal, user }) {
+export default function Modal({
+  isOpen,
+  toggleModal,
+  user,
+  removeFromRoom,
+  loading,
+}) {
   //   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
-    toggleModal()
+    toggleModal();
+  };
+
+  const remove = async () => {
+    await removeFromRoom();
+    toggleModal();
   };
 
   return (
@@ -26,7 +37,9 @@ export default function Modal({ isOpen, toggleModal, user }) {
     >
       <DialogHeader>Confirm Action</DialogHeader>
       <DialogBody divider>
-        Are you sure you want to remove {user.lastname + " " + user.firstname + " "+ user.middlename} from {user.room.hostel.name} room {user.room.roomNum}
+        Are you sure you want to remove{" "}
+        {user.lastname + " " + user.firstname + " " + user.middlename} from{" "}
+        {user.room.hostel.name} room {user.room.roomNum}
       </DialogBody>
       <DialogFooter>
         <Button
@@ -37,9 +50,15 @@ export default function Modal({ isOpen, toggleModal, user }) {
         >
           <span>Cancel</span>
         </Button>
-        <Button variant="gradient" color="green" onClick={handleOpen}>
-          <span>Confirm</span>
-        </Button>
+        {loading ? (
+          <Button variant="gradient" color="green" onClick={remove}>
+            <Spinner />
+          </Button>
+        ) : (
+          <Button variant="gradient" color="green" onClick={remove}>
+            <span>Confirm</span>
+          </Button>
+        )}
       </DialogFooter>
     </Dialog>
   );

@@ -57,8 +57,41 @@ export const usersApiSlice = apiSlice.injectEndpoints({
           "x-access-token": (data.token)
         }
       }),
-    })
+    }),
+
+    getStudentsInroom: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/user/filter?page=${data.page}&limit=${data.limit}`,
+        method: "POST",
+        headers: {
+          "x-access-token": (data.token)
+        },
+        body: {room: data.room}
+      }),
+    }),
+
+    removeFromRoom: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/user/remove`,
+        method: "POST",
+        headers: {
+          "x-access-token": (data.token)
+        },
+        body: {userId: data.userId}
+      }),
+    }),
+
+    assignToRoom: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/user/assign`,
+        method: "POST",
+        headers: {
+          "x-access-token": (data.token)
+        },
+        body: {userId: data.userId, roomId: data.roomId}
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useGetStudentsMutation, useGetStudentMutation, useGetHostelsMutation, useGetAvailableRoomsMutation } = usersApiSlice;
+export const { useLoginMutation, useLogoutMutation, useGetStudentsMutation, useGetStudentMutation, useGetHostelsMutation, useGetAvailableRoomsMutation, useGetStudentsInroomMutation, useRemoveFromRoomMutation, useAssignToRoomMutation } = usersApiSlice;

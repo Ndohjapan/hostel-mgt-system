@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   useGetStudentMutation,
   useLogoutMutation,
+  useRemoveFromRoomMutation,
 } from "../slices/usersApiSlice";
 import { toast } from "react-toastify";
 import { logout } from "../slices/authSlice";
@@ -15,6 +16,7 @@ function StudentdDetail() {
   const { twk } = useSelector((state) => state.auth);
   const { userId } = useParams();
   const [getStudent, { isLoading }] = useGetStudentMutation();
+  const [removeStudent, {isLoading: loading}] = useRemoveFromRoomMutation();
   const [logoutApiCall] = useLogoutMutation();
   const [user, setUser] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,15 +44,30 @@ function StudentdDetail() {
     }
 
     getRes();
-  }, [dispatch, getStudent, logoutApiCall, navigate, twk, userId]);
+  }, [dispatch, getStudent, logoutApiCall, navigate, twk, userId, setUser]);
 
   const assignRoom = async(e) => {
     e.preventDefault
-    navigate("/room/available");
+    navigate(`/room/available/${userId}`);
   }
 
   const toggleModal = () => {
     setIsOpen(prev => !prev);
+  };
+
+  const removeFromRoom = async() => {
+    try {
+      const res = await removeStudent({ page: 1, limit: 20, token: twk, userId });
+      if(res.error){
+        throw Error(res.error.data.message);
+      }
+      setUser(res.data);
+    } catch (error) {
+      toast.error(error.message);
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate("/login");
+    }
   };
 
   return (
@@ -176,7 +193,7 @@ function StudentdDetail() {
                   {user.room ? (
                     <><button className="text-white rounded-md bg-red-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={toggleModal}>
                         Remove
-                      </button><Modal isOpen={isOpen} toggleModal={toggleModal} user={user}/></>
+                      </button><Modal isOpen={isOpen} toggleModal={toggleModal} user={user} removeFromRoom={removeFromRoom} loading={loading}/></>
                   ) : (
                     <button className="text-white rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={assignRoom}>
                       Assign

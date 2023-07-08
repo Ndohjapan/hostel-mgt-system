@@ -18,7 +18,7 @@ import {
 import { toast } from "react-toastify";
 import { logout } from "../slices/authSlice";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const TABLE_HEAD = ["Hostel", "Room No", "Max Per Room", "No Students"];
 
@@ -58,6 +58,7 @@ function AvailableRoom() {
   const [hostels, setHostels] = useState([]);
   const [selectedHostel, setSelectedHostel] = useState("");
   const [rooms, setRooms] = useState([]);
+  const { userId } = useParams();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -91,7 +92,6 @@ function AvailableRoom() {
           throw Error(res.error.data.message);
         }
         setRooms(res.data);
-        console.log(res.data);
       } catch (error) {
         console.log(error);
         toast.error(error.message);
@@ -100,6 +100,12 @@ function AvailableRoom() {
         navigate("/login");
       }
 
+  };
+
+  const roomDetails = async (e) => {
+    e.preventDefault();
+    const roomId = e.currentTarget.id;
+    navigate(`/select-room/${roomId}/${userId}`);
   };
 
   return (
@@ -144,7 +150,7 @@ function AvailableRoom() {
                       <Typography
                         variant="small"
                         color="blue-gray"
-                        className="font-normal leading-none opacity-70"
+                        className="font-normal leading-none opacity-70 text-center"
                       >
                         {head}
                       </Typography>
@@ -165,6 +171,7 @@ function AvailableRoom() {
                         key={index}
                         id={_id}
                         className="hover:bg-gray-100 cursor-pointer"
+                        onClick={roomDetails}
                       >
                         <td className={classes}>
                           <div className="flex flex-col">
